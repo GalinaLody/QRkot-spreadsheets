@@ -1,0 +1,38 @@
+from fastapi import APIRouter
+
+from app.api.endpoints import (
+    charity_project_router, donation_router, yandex_router
+)
+from app.core.user import auth_backend, fastapi_users
+from app.schemas.user import UserCreate, UserRead, UserUpdate
+
+AUTH_TAG = 'auth'
+
+main_router = APIRouter()
+main_router.include_router(
+    charity_project_router, prefix='/charity_project', tags=['Charity project']
+)
+main_router.include_router(
+    donation_router, prefix='/donation', tags=['Donation']
+)
+
+users_auth_router = fastapi_users.get_auth_router(auth_backend)
+main_router.include_router(
+    users_auth_router, prefix='/auth/jwt', tags=[AUTH_TAG]
+)
+
+users_register_router = fastapi_users.get_register_router(UserRead, UserCreate)
+main_router.include_router(
+    users_register_router, prefix='/auth', tags=[AUTH_TAG],
+)
+
+users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
+users_router.routes = [
+    route for route in users_router.routes if route.name != 'users:delete_user'
+]
+main_router.include_router(
+    users_router, prefix='/users', tags=['users'],
+)
+main_router.include_router(
+    yandex_router, prefix='/yandex', tags=['Yandex Disk']
+)
