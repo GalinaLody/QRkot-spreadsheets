@@ -44,7 +44,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ) -> None:
         if len(password) < USER_MANAGER_LEN_PASSWORD:
             raise InvalidPasswordException(
-                reason=f'Пароль должен содержать не менее {USER_MANAGER_LEN_PASSWORD} символов'
+                reason=f'Пароль должен содержать не менее '
+                f'{USER_MANAGER_LEN_PASSWORD} символов'
             )
         if user.email in password:
             raise InvalidPasswordException(

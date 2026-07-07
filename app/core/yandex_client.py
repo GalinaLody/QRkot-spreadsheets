@@ -55,8 +55,8 @@ class YandexDiskClient:
                 'Content-Type': (
                     'application/vnd.openxmlformats-officedocument'
                     '.spreadsheetml.sheet'
-                    )
-                }
+                )
+            }
         )
         response.raise_for_status()
 
