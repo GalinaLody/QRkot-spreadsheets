@@ -15,6 +15,7 @@ router = APIRouter()
 
 @router.post(
     '/',
+    response_model=str,
     dependencies=[Depends(current_superuser)],
     summary='Создать Excel-отчёт на Яндекс Диске',
     description="""

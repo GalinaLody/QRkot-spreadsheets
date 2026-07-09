@@ -7,6 +7,12 @@ from .config import settings
 from .constants import NAME_FOLDER_REPORT, YANDEX_CLIENT_TIMEOUT
 
 
+# Замечание:При получении ссылки на загрузку проверьте, что она не пустая -
+# реализовала проверку в методе async def create_excel_file
+# в блоке if not upload_url;
+# Замечание: При скачивании должен быть указан follow_redirects=True -
+# в ТЗ нет требований о
+# методе для скачивания файла(и тесту его не проверяют), мне его добавить?
 class YandexDiskClient:
     """Универсальный клиент для API Яндекс Диска"""
 
@@ -86,11 +92,12 @@ class YandexDiskClient:
     async def _create_folder(self, folder: str):
         """Создаёт папку QRKot Reports, если её нет."""
         try:
-            await self._client.put(
+            response = await self._client.put(
                 f'{self.base_url}/resources',
                 headers=self.headers,
                 params={'path': f'disk:/{folder}'}
             )
+            response.raise_for_status()
         except httpx.HTTPStatusError as error:
             if error.response.status_code != HTTPStatus.CONFLICT:
                 raise

@@ -7,15 +7,20 @@ from app.core.config import settings
 from app.core.constants import NAME_FOLDER_REPORT
 from app.core.yandex_client import YandexDiskClient
 
+SECOND_IN_DAY = 86400
+SECOND_IN_HOUR = 3600
+SECOND_IN_MINUTES = 60
+FORMAT_BORDER = 1
+
 
 def format_time_delta(full_collection_time: timedelta) -> str:
     """Вычисляет количество дней, часов и минут,
     за которое был закрыт сбор по проекту.
     """
     total_seconds = int(full_collection_time.total_seconds())
-    days, remainder_for_hours = divmod(total_seconds, 86400)
-    hours, remainder_for_minutes = divmod(remainder_for_hours, 3600)
-    minutes, remainder = divmod(remainder_for_minutes, 60)
+    days, remainder_for_hours = divmod(total_seconds, SECOND_IN_DAY)
+    hours, remainder_for_minutes = divmod(remainder_for_hours, SECOND_IN_HOUR)
+    minutes, remainder = divmod(remainder_for_minutes, SECOND_IN_MINUTES)
     if not days:
         collection_time_in_format = f'{hours} ч. {minutes} мин.'
     else:
@@ -52,16 +57,16 @@ async def create_simple_report(
         'bold': True,
         'bg_color': '#2F75B5',
         'font_color': 'white',
-        'border': 1,
+        'border': FORMAT_BORDER,
         'align': 'left'
     })
     cell_format = workbook.add_format({
-        'border': 1,
+        'border': FORMAT_BORDER,
         'align': 'left'
     })
     total_format = workbook.add_format({
         'bold': True,
-        'border': 1,
+        'border': FORMAT_BORDER,
         'align': 'left'
     })
     worksheet.merge_range('A1:C1', f'Отчет от {now_date_time}', title_format)
